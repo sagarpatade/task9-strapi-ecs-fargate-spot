@@ -5,7 +5,8 @@ output "target_group_arn" {
   value       = aws_lb_target_group.strapi_tg.arn
 }
 
+
 output "alb_dns_name" {
-  description = "The public URL to access the Strapi application"
-  value       = aws_lb.main.dns_name
+  description = "The DNS name of the load balancer"
+  value       = module.alb.alb_dns_name 
 }

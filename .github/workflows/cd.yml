@@ -11,6 +11,8 @@ jobs:
   terraform:
     name: Terraform Apply
     runs-on: ubuntu-latest
+    env:
+      TF_LOG: INFO  # Added for better debugging logs
 
     steps:
       - name: Checkout Code
@@ -30,7 +32,6 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        # This fix addresses the 'var.aws_account_id' prompt error
         run: terraform plan -out=tfplan -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}"
 
       - name: Terraform Apply
