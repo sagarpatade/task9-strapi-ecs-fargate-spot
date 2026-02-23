@@ -40,6 +40,7 @@ module "ecs" {
   private_subnets  = module.networking.private_subnet_ids
   ecs_sg_id        = module.security.ecs_sg_id
   
+  
   # Ensure your RDS module has an output named 'db_instance_endpoint' or similar
   db_host          = module.rds.db_instance_endpoint 
   
