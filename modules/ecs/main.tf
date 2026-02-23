@@ -1,23 +1,9 @@
-# 1. The Cluster
+# 1. Cluster Definition
 resource "aws_ecs_cluster" "main" {
   name = "sagar-strapi-cluster"
 }
 
-# 2. Capacity Provider Strategy for the Cluster
-# This tells the cluster to allow FARGATE_SPOT
-resource "aws_ecs_cluster_capacity_providers" "main" {
-  cluster_name       = aws_ecs_cluster.main.name
-  capacity_providers = ["FARGATE_SPOT"]
-
-  default_capacity_provider_strategy {
-    capacity_provider = "FARGATE_SPOT"
-    weight            = 1
-  }
-}
-
-# 3. The Task Definition
-# 1. This is your Task Definition 
-# 2. THE TASK DEFINITION (Named "strapi")
+# 2. Task Definition (Named "strapi")
 resource "aws_ecs_task_definition" "strapi" {
   family                   = "strapi-task"
   network_mode             = "awsvpc"
@@ -38,28 +24,34 @@ resource "aws_ecs_task_definition" "strapi" {
           hostPort      = 1337
         }
       ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/strapi"
+          "awslogs-region"        = var.aws_region
+          "awslogs-stream-prefix" = "ecs"
+          "awslogs-create-group"  = "true"
+        }
+      }
     }
   ])
 }
 
-# 4. The Service (Configured for Spot)
+# 3. ECS Service (References "strapi")
 resource "aws_ecs_service" "main" {
   name            = "sagar-strapi-service"
   cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app.arn
+  
+  # FIX: This was calling .app.arn, now it calls .strapi.arn
+  task_definition = aws_ecs_task_definition.strapi.arn
+  
   desired_count   = 1
-
-  # This forces the service to use the cheaper Spot instances
-  capacity_provider_strategy {
-    capacity_provider = "FARGATE_SPOT"
-    weight            = 1
-    base              = 0
-  }
+  launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = var.private_subnets
+    subnets          = var.subnets
     security_groups  = [var.ecs_sg_id]
-    assign_public_ip = false # Hidden in the private network
+    assign_public_ip = true
   }
 
   load_balancer {
@@ -67,9 +59,9 @@ resource "aws_ecs_service" "main" {
     container_name   = "strapi"
     container_port   = 1337
   }
-
-  # This helps avoid errors when redeploying
-  force_new_deployment = true
 }
 
-
+# 4. Output the Cluster Name
+output "cluster_name" {
+  value = aws_ecs_cluster.main.name
+}

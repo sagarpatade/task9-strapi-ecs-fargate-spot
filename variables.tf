@@ -28,3 +28,7 @@ variable "db_username" {
   default     = "postgres"
 }
 
+variable "subnets" {
+  description = "Public subnets for deployment"
+  type        = list(string)
+}
