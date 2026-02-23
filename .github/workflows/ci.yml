@@ -6,8 +6,9 @@ on:
       - main
     paths:
       - 'Dockerfile'
-      - 'src/**'     # Only run if application code changes
+      - 'src/**'
       - 'package.json'
+      - '**.tf' # Added to trigger on infrastructure changes too
 
 jobs:
   build-and-push:
@@ -16,10 +17,10 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -27,11 +28,12 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, Tag, and Push Image
         env:
-          ECR_REGISTRY: 811738710312.dkr.ecr.us-east-1.amazonaws.com
+          # Using secret for Account ID to keep registry URL dynamic
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
           ECR_REPOSITORY: sagar-patade-strapi-app
           IMAGE_TAG: latest
         run: |
