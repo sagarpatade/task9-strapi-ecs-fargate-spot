@@ -28,7 +28,12 @@ variable "db_username" {
   default     = "postgres"
 }
 
-variable "subnets" {
-  description = "Public subnets for deployment"
-  type        = list(string)
+variable "public_subnets" {
+  type    = list(string)
+  default = ["subnet-07720f09127d19cc7", "subnet-022704c446337b2ce"]
+}
+
+variable "private_subnets" {
+  type    = list(string)
+  default = ["subnet-0a1358e3740da56a6"] 
 }
