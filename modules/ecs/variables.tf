@@ -38,7 +38,4 @@ variable "aws_region" {
   default     = "us-east-1" # Optional: provides a fallback value
 }
 
-variable "subnets" {
-  description = "List of subnet IDs for the ECS service"
-  type        = list(string)
-}
+

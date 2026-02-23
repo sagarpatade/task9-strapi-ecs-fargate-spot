@@ -31,22 +31,20 @@ module "rds" {
   rds_sg_id       = module.security.rds_sg_id
 }
 
+
+
 # 6. Build the ECS App (Needs Private Subnets, Target Group, and DB URL)
 module "ecs" {
   source           = "./modules/ecs"
   
-  # Mapping module outputs to ECS inputs
+  # Ensure this label matches exactly what is in modules/ecs/variables.tf
+  private_subnets  = module.networking.private_subnet_ids 
+  
   target_group_arn = module.alb.target_group_arn
-  private_subnets  = module.networking.private_subnet_ids
   ecs_sg_id        = module.security.ecs_sg_id
-  
-  
-  # Ensure your RDS module has an output named 'db_instance_endpoint' or similar
   db_host          = module.rds.db_instance_endpoint 
-  
-  # Passing the account ID from your root variable
   aws_account_id   = var.aws_account_id
 
   execution_role_arn = "arn:aws:iam::811738710312:role/ecsTaskExecutionRole"
   task_role_arn      = "arn:aws:iam::811738710312:role/ecsTaskExecutionRole"
-}# Triggering final deployment
+}
