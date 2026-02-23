@@ -27,3 +27,7 @@ variable "db_username" {
   type        = string
   default     = "postgres"
 }
+
+output "rds_endpoint" {
+  value = module.rds.db_instance_endpoint # Use the name we just defined in the module
+}
