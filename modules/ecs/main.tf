@@ -16,36 +16,22 @@ resource "aws_ecs_cluster_capacity_providers" "main" {
 }
 
 # 3. The Task Definition
-resource "aws_ecs_task_definition" "app" {
+resource "aws_ecs_task_definition" "strapi" {
   family                   = "strapi-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = 1024
-  memory                   = 2048
+  cpu                      = "256"
+  memory                   = "512"
 
-  # Use ${var.aws_account_id} to inject your real ID automatically
-  execution_role_arn = "arn:aws:iam::${var.aws_account_id}:role/ecsTaskExecutionRole"
-  task_role_arn      = "arn:aws:iam::${var.aws_account_id}:role/ecsTaskExecutionRole"
+  # These must point to the variables
+  execution_role_arn       = var.execution_role_arn
+  task_role_arn            = var.task_role_arn
+
   container_definitions = jsonencode([
     {
-      name      = "strapi"
-      image     = "your-ecr-repo-url:latest" # This will be injected by the CI/CD
-      essential = true
-      portMappings = [
-        {
-          containerPort = 1337
-          hostPort      = 1337
-        }
-      ]
-      environment = [
-        { name = "DATABASE_HOST", value = var.db_host },
-        { name = "DATABASE_PORT", value = "5432" },
-        { name = "DATABASE_NAME", value = "strapi" },
-        { name = "DATABASE_USERNAME", value = "postgres" },
-        { name = "DATABASE_PASSWORD", value = "strapi12345" },
-        { name = "NODE_ENV", value = "production" }
-      ]
-      # NOTE: logConfiguration block is REMOVED to disable CloudWatch logging
+      name  = "strapi"
+      image = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/strapi-repo:latest"
+      # ... rest of your container config
     }
   ])
 }

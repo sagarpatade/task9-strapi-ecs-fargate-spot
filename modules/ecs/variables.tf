@@ -23,3 +23,18 @@ variable "aws_account_id" {
   type        = string
 }
 
+variable "execution_role_arn" {
+  description = "The ARN of the existing shared execution role"
+  type        = string
+}
+
+variable "task_role_arn" {
+  description = "The ARN of the existing shared task role"
+  type        = string
+}
+variable "aws_region" {
+  description = "The AWS region to deploy resources into"
+  type        = string
+  default     = "us-east-1" # Optional: provides a fallback value
+}
+

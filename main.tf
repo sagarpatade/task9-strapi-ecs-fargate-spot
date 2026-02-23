@@ -46,4 +46,7 @@ module "ecs" {
   
   # Passing the account ID from your root variable
   aws_account_id   = var.aws_account_id
+
+  execution_role_arn = "arn:aws:iam::811738710312:role/ecsTaskExecutionRole"
+  task_role_arn      = "arn:aws:iam::811738710312:role/ecsTaskExecutionRole"
 }# Triggering final deployment
