@@ -27,19 +27,3 @@ variable "db_username" {
   type        = string
   default     = "postgres"
 }
-
-variable "private_subnets" {
-  description = "List of private subnet IDs for the ECS tasks"
-  type        = list(string)
-}
-
-
-variable "target_group_arn" {
-  description = "ARN of the ALB target group"
-  type        = string
-}
-
-variable "db_host" {
-  description = "The endpoint/address of the RDS database"
-  type        = string
-}
