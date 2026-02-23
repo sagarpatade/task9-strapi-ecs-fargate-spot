@@ -31,7 +31,7 @@ jobs:
 
       - name: Terraform Plan
         # We only pass the variables defined in your root variables.tf
-        # Everything else (db_host, ecs_sg_id, etc.) is handled inside main.tf
+        # This ensures that the plan reflects the actual inputs your infrastructure.
         run: |
           terraform plan -out=tfplan \
             -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" \
