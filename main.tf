@@ -35,10 +35,14 @@ module "rds" {
 module "ecs" {
   source           = "./modules/ecs"
   
-  # This part maps the data from other modules to the ECS variables
+  # Mapping module outputs to ECS inputs
   target_group_arn = module.alb.target_group_arn
   private_subnets  = module.networking.private_subnet_ids
   ecs_sg_id        = module.security.ecs_sg_id
-  db_host          = module.rds.db_endpoint
+  
+  # Ensure your RDS module has an output named 'db_instance_endpoint' or similar
+  db_host          = module.rds.db_instance_endpoint 
+  
+  # Passing the account ID from your root variable
   aws_account_id   = var.aws_account_id
 }

@@ -6,13 +6,12 @@ on:
       - main
     paths:
       - '**.tf'
+      - 'Dockerfile'
 
 jobs:
   terraform:
     name: Terraform Apply
     runs-on: ubuntu-latest
-    env:
-      TF_LOG: INFO  # Added for better debugging logs
 
     steps:
       - name: Checkout Code
@@ -32,7 +31,17 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}"
+        # We pass all necessary variables here to prevent interactive prompts
+        run: |
+          terraform plan -out=tfplan \
+            -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" \
+            -var="db_host=${{ secrets.DB_HOST }}" \
+            -var="db_name=strapi" \
+            -var="db_user=postgres" \
+            -var="db_password=${{ secrets.DB_PASSWORD }}"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
