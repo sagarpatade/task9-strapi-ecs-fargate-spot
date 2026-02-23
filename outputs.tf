@@ -5,7 +5,8 @@ output "load_balancer_dns" {
 
 output "rds_endpoint" {
   description = "The connection endpoint for your database"
-  value       = module.rds.db_endpoint
+  # Change db_endpoint to db_instance_endpoint
+  value       = module.rds.db_instance_endpoint
 }
 
 output "ecs_cluster_name" {
