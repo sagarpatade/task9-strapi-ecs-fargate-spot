@@ -61,7 +61,3 @@ resource "aws_ecs_service" "main" {
   }
 }
 
-# 4. Output the Cluster Name
-output "cluster_name" {
-  value = aws_ecs_cluster.main.name
-}
