@@ -16,22 +16,27 @@ resource "aws_ecs_cluster_capacity_providers" "main" {
 }
 
 # 3. The Task Definition
+# 1. This is your Task Definition 
 resource "aws_ecs_task_definition" "strapi" {
   family                   = "strapi-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
-
-  # These must point to the variables
   execution_role_arn       = var.execution_role_arn
   task_role_arn            = var.task_role_arn
 
   container_definitions = jsonencode([
     {
-      name  = "strapi"
-      image = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/strapi-repo:latest"
-      # ... rest of your container config
+      name      = "strapi"
+      image     = "${var.aws_account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/strapi-repo:latest"
+      essential = true
+      portMappings = [
+        {
+          containerPort = 1337
+          hostPort      = 1337
+        }
+      ]
     }
   ])
 }
