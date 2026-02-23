@@ -31,15 +31,14 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        # We only pass the variables defined in your root variables.tf
-        # This ensures that the plan reflects the actual inputs your infrastructure.
-        run: |
-          terraform plan -out=tfplan \
-            -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" \
-            -var="db_password=${{ secrets.DB_PASSWORD }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          terraform plan -out=tfplan \
+            -var="subnets=${{ secrets.SUBNETS }}" \
+            -var="aws_account_id=${{ secrets.AWS_ACCOUNT_ID }}" \
+            -var="db_password=${{ secrets.DB_PASSWORD }}"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
