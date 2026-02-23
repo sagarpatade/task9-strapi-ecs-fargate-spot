@@ -17,6 +17,7 @@ resource "aws_ecs_cluster_capacity_providers" "main" {
 
 # 3. The Task Definition
 # 1. This is your Task Definition 
+# 2. THE TASK DEFINITION (Named "strapi")
 resource "aws_ecs_task_definition" "strapi" {
   family                   = "strapi-task"
   network_mode             = "awsvpc"
