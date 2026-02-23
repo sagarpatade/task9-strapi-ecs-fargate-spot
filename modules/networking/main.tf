@@ -2,7 +2,7 @@
 
 # 1. USE EXISTING VPC
 data "aws_vpc" "main" {
-  id = "vpc-091cb9c5df7bd2971"
+  id = "vpc-0ba4e84b592f25b07"
 }
 
 # 2. USE EXISTING INTERNET GATEWAY
